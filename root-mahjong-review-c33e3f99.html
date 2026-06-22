@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麻将胡了 · 牌理与和牌哲学</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #faf7f2;
+            color: #2c2c2c;
+            line-height: 1.7;
+        }
+
+        /* ===== hero 深色头图 ===== */
+        .hero {
+            background: linear-gradient(145deg, #1e1b18 0%, #2f2a26 50%, #1e1b18 100%);
+            color: #efece6;
+            padding: 4rem 1.5rem 3.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(230, 185, 95, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -15%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(190, 155, 100, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 500;
+            letter-spacing: 4px;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 span {
+            color: #dbb97a;
+        }
+
+        .hero .sub {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 1.6rem;
+            opacity: 0.82;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+        }
+
+        .hero .meta-tag {
+            display: inline-block;
+            background: rgba(219, 185, 122, 0.15);
+            border: 1px solid rgba(219, 185, 122, 0.25);
+            padding: 0.4rem 1.4rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #dbb97a;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 浅色正文区 ===== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: 3rem 0;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 450;
+            margin-bottom: 1.2rem;
+            color: #222;
+            border-left: 5px solid #dbb97a;
+            padding-left: 1rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1.2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.25s;
+            border: 1px solid #f0ebe4;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.6rem;
+            color: #1e1b18;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #4a4742;
+        }
+
+        .card .emoji-badge {
+            display: inline-block;
+            background: #f6f1ea;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.7rem;
+            color: #6b5f53;
+        }
+
+        .explain-text {
+            font-size: 1rem;
+            color: #3d3a35;
+            max-width: 800px;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .explain-text a {
+            color: #a5824b;
+            text-decoration: none;
+            font-weight: 450;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .explain-text a:hover {
+            color: #7f653a;
+            border-bottom-color: #dbb97a;
+        }
+
+        .faq-item {
+            margin-bottom: 1.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #e6dfd6;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-q {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #1e1b18;
+            margin-bottom: 0.15rem;
+        }
+
+        .faq-a {
+            font-size: 0.95rem;
+            color: #5a554e;
+            line-height: 1.6;
+        }
+
+        .faq-a a {
+            color: #a5824b;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .faq-a a:hover {
+            border-bottom-color: #dbb97a;
+        }
+
+        .bottom-links {
+            background: #f4efe8;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid #e2d9ce;
+            margin-top: 1rem;
+        }
+
+        .bottom-links .inner {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+            color: #4d4841;
+        }
+
+        .bottom-links .inner a {
+            color: #a5824b;
+            text-decoration: none;
+            font-weight: 450;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .bottom-links .inner a:hover {
+            border-bottom-color: #dbb97a;
+        }
+
+        .footnote {
+            font-size: 0.8rem;
+            color: #8a7f72;
+            margin-top: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e6dfd6;
+            margin: 1.5rem 0;
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 1.9rem;
+                letter-spacing: 2px;
+            }
+            .hero {
+                padding: 3rem 1rem 2.5rem;
+                min-height: 280px;
+            }
+            .section-title {
+                font-size: 1.3rem;
+            }
+            .card-grid {
+                gap: 1rem;
+            }
+            .card {
+                padding: 1.4rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- hero -->
+    <header class="hero">
+        <h1>麻将<span>胡了</span></h1>
+        <p class="sub">牌面组合 × 概率思维 &nbsp;·&nbsp; 和牌不止靠运气</p>
+        <div class="meta-tag">📋 牌理 · 形听 · 弃牌哲学</div>
+    </header>
+
+    <!-- 优势区 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">从牌理到和牌 · 四个关键维度</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="emoji-badge">🧩 牌效</div>
+                    <h3>面子效率</h3>
+                    <p>如何快速组合顺子与刻子，减少孤立牌停留时间。每张牌都有“进张数”，优先保留多面听结构是缩短和牌路程的核心。</p>
+                </div>
+                <div class="card">
+                    <div class="emoji-badge">📊 概率</div>
+                    <h3>剩余牌分布</h3>
+                    <p>根据河牌与副露，推算山牌剩余枚数。一张8筒出现3张后，剩余1张的听牌价值就会急剧下降——牌感需要数据支撑。</p>
+                </div>
+                <div class="card">
+                    <div class="emoji-badge">⚖️ 防守</div>
+                    <h3>弃牌与兜牌</h3>
+                    <p>并非每一局都要强行进攻。当多家立直或高打点副露出现时，选择安全牌弃和，等待下一局更有利的起手。</p>
+                </div>
+                <div class="card">
+                    <div class="emoji-badge">🎯 形听</div>
+                    <h3>良形与愚形</h3>
+                    <p>两面听牌（良形）和边坎听牌（愚形）之间，和牌率相差两倍以上。如何把愚形改良为良形，是进阶牌手的分水岭。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 说明区 -->
+    <section style="background: #ffffff; border-top: 1px solid #ede7df; border-bottom: 1px solid #ede7df;">
+        <div class="container">
+            <h2 class="section-title">为什么“胡牌”是一种系统决策</h2>
+            <div class="explain-text">
+                <p style="margin-bottom: 1rem;">
+                    很多人以为麻将纯粹靠运气，实际上每一次摸切都是一次微型的博弈。从起手配牌开始，你就在不断评估“这局应该攻还是守”“哪一张牌打出去最安全”“听什么牌别人可能放铳”。这些判断背后是对牌效率、剩余枚数、打点期望和场况的综合考量。
+                </p>
+                <p style="margin-bottom: 1rem;">
+                    举个例子：手牌有一对红中，同时有两张4万和5万。有人习惯直接打掉其中一张，但如果你保留“4-5万”这个搭子，后续摸到3万或6万就能形成两面听牌，而红中作为役牌对子还可以增加番数。这种看似微小的选择，长期下来会显著影响你的整体胜率。
+                </p>
+                <p>
+                    如果你对牌理背后的逻辑感兴趣，可以在 <a href="https://root-mahjong.com">麻将胡了</a> 中找到更多关于牌型组合、防守读牌和点数计算的详细内容。每一局都是新的决策树，而理解这些树的分支，就是通往更稳定和牌的钥匙。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ 摘要区 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">常见疑问 · 简短解答</h2>
+
+            <div class="faq-item">
+                <div class="faq-q">Q：手牌总是有很多对子，该怎么处理？</div>
+                <div class="faq-a">
+                    保留对子较多的手牌有两种策略：一种是把所有对子当作可能的刻子，朝对对胡方向发展；另一种是保留其中一个对子做雀头，其余对子拆掉重组搭子。具体选择取决于打点期望和巡目位置。通常早巡保留更多对子灵活性更高，晚巡则需要快速确定方向。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">Q：立直之后应该继续进攻还是防守？</div>
+                <div class="faq-a">
+                    立直本身是一种宣言，也是一种防守信号。如果立直后摸到危险牌（尤其是别人打过但自己曾经放铳过的牌），可以考虑弃和。但如果手牌有多个安全牌且场况不紧迫，继续维持听牌状态等待自摸或点炮也是合理选择。详细案例分析可以在 <a href="https://root-mahjong.com">麻将胡了</a> 的进阶部分找到。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">Q：怎么判断一张牌是否安全？</div>
+                <div class="faq-a">
+                    最基础的安全牌判断：同巡中别人刚刚打过的牌（现物）相对安全；早巡打出的字牌通常安全；筋牌（147、258、369关系）也是常用安全信号。但要注意，当有人副露后，安全牌的范围会迅速缩小，需要结合副露内容和打牌顺序综合判断。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">Q：什么是“兜牌”？和“弃和”有什么区别？</div>
+                <div class="faq-a">
+                    弃和是完全放弃和牌，只打安全牌等待流局。兜牌则是暂时防守，但保留一个低风险的听牌机会，比如打掉危险搭子后留下一个安全度较高的两面听牌。兜牌比完全弃和更有弹性，但需要更精确的牌局阅读力。
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部链接 -->
+    <div class="bottom-links">
+        <div class="inner">
+            <p style="margin-bottom: 0.5rem;">
+                了解更多牌理、战术与实例分析 →
+                <a href="https://root-mahjong.com">麻将胡了</a>
+            </p>
+            <p class="footnote">
+                内容基于一般麻将理论与牌效率研究 · 仅供学习交流 · 理性娱乐
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>
